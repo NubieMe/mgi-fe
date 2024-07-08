@@ -21,6 +21,7 @@ import React from "react";
 import { api } from "../../libs/api";
 import { file, users } from "../../types";
 import { Link } from "react-router-dom";
+import * as XLSX from "xlsx";
 
 export default function Home() {
     const [file, setFile] = React.useState<file>({
@@ -69,6 +70,24 @@ export default function Home() {
         }
     }
 
+    function exportDataXLSX() {
+        const filename = "excel-export-" + Date.now() + ".xlsx";
+        const workbook = XLSX.utils.book_new();
+
+        const worksheet = XLSX.utils.json_to_sheet(data!);
+
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+        XLSX.writeFile(workbook, filename);
+        // const href = URL.createObjectURL(blob);
+
+        // const link = document.createElement("a");
+        // link.href = href;
+        // link.download = filename + ".xlsx";
+        // document.body.appendChild(link);
+        // link.click();
+    }
+
     return (
         <Box m={50} justifyContent="center">
             <Card p={50} w={"full"} bg={"white"} boxShadow={"lg"}>
@@ -95,6 +114,7 @@ export default function Home() {
                         <Button type="submit" onClick={(e) => upload(e)}>
                             Upload
                         </Button>
+                        {data && <Button onClick={exportDataXLSX}>Export</Button>}
                         {data && <Button onClick={handleImport}>import</Button>}
                     </Box>
                 </form>
